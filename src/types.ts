@@ -27,7 +27,10 @@ export interface PubSubMessage {
 /**
  * Callback received on a subscribed
  */
-export type MessageCallback = (err: Error | null, msg: PubSubMessage) => void;
+export type MessageCallback = (
+  err: Error | null,
+  msg: PubSubMessage | null,
+) => void;
 
 /**
  * The interface that a pub sub provider must implement

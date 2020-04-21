@@ -86,10 +86,11 @@ export class PubSub extends events.EventEmitter {
   listenRoutes() {
     Object.entries(this.router).forEach(([path, controller]) => {
       const formattedPath = formatPath(path);
+      console.log(`Subscribe on ${formattedPath}`);
       this.provider.subscribe(
         formattedPath,
-        async (err: Error | null, msg: PubSubMessage) => {
-          if (err) {
+        async (err: Error | null, msg: PubSubMessage | null) => {
+          if (err || !msg) {
             console.log(err);
             return;
           }
