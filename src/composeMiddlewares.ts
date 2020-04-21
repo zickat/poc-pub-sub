@@ -1,6 +1,11 @@
 import { Middleware } from './types';
 import { Context } from './Context';
 
+/**
+ * Call all middleware to be called in the right order
+ * Inspired by https://github.com/koajs/compose
+ * @param middlewares
+ */
 export const composeMiddlewares = (middlewares: Middleware[]) => {
   return function(context: Context, next: Middleware) {
     // last called middleware #

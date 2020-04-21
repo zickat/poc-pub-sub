@@ -1,15 +1,16 @@
-import { Nats } from './Nats';
+import { PubSub } from './PubSub';
 import { Context } from './Context';
-import { KoaNatsMiddleware } from './KoaNatsMiddleware';
-import { NatsError } from './NatsError';
-import { NatsMessage, Middleware, Router } from './types';
+import { PubSubKoaMiddleware } from './PubSubKoaMiddleware';
+import { PubSubError } from './PubSubError';
+import { PubSubMessage, Middleware, Routes } from './types';
+import { Router } from './Router';
 
 export {
-  Nats,
+  PubSub,
   Context,
-  KoaNatsMiddleware,
-  NatsMessage,
+  PubSubKoaMiddleware,
+  PubSubMessage,
   Middleware,
   Router,
-  NatsError,
+  PubSubError,
 };

@@ -6,11 +6,13 @@
   "scripts": {
     "build": "tsc",
     "consummer": "ts-node-dev src/exemple/consummer.ts",
+    "consummer:fp": "ts-node-dev src/exemple/consummer-fp.ts",
     "consummer:reply": "ts-node-dev src/exemple/consummer-with-response.ts",
     "gateway": "ts-node-dev src/exemple/gateway.ts",
     "prepublishOnly": "npm run build",
     "producer": "ts-node src/exemple/producer.ts",
-    "test": "jest"
+    "test": "jest",
+    "watch": "tsc --watch"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +28,7 @@
   },
   "dependencies": {
     "@schoolmouv/koa-utils": "2.0.0",
+    "fp-ts": "^2.5.3",
     "koa": "^2.11.0",
     "ts-nats": "^1.2.12"
   }

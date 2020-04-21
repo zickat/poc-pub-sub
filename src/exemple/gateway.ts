@@ -1,25 +1,39 @@
 import Koa, { Context } from 'koa';
 import { Router } from '@schoolmouv/koa-utils';
-import { KoaNatsMiddleware } from '../KoaNatsMiddleware';
-import {Nats} from "../Nats";
+import { PubSubKoaMiddleware } from '../PubSubKoaMiddleware';
+import { PubSub } from '../PubSub';
+import { NatsProvider } from '../NatsProvider';
+import { profileSdk } from './consummer-fp';
 
 const app = new Koa();
 
 const userSdk = {
-  get: (nats: Nats, id: string) => {
-    return nats.request(`users.${id}.toto`, 'Hey')
+  get: (pubSub: PubSub, id: string) => {
+    return pubSub.request(`users.${id}.toto`, 'Hey');
   },
 };
 
 const testRouter = Router('/toto', {
   'GET /:id': async (ctx: Context) => {
-    const res = await userSdk.get(ctx.nats, ctx.params.id);
+    let res;
+    try {
+      // res = await userSdk.get(ctx.pubSub, ctx.params.id);
+      res = await profileSdk.getUserToken(ctx.params.id, 'toto');
+    } catch (e) {
+      console.error(e);
+      ctx.body = { e: e.message };
+      return;
+    }
     ctx.status = 200;
     ctx.body = res;
   },
 });
 
-app.use(KoaNatsMiddleware());
+const pubSub = new PubSub(new NatsProvider());
+pubSub.connect();
+
+profileSdk.init(pubSub);
+app.use(PubSubKoaMiddleware(pubSub));
 
 app.use(async (ctx, next) => {
   const start = Date.now();

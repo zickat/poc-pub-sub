@@ -1,38 +1,47 @@
-import { Msg } from 'ts-nats';
 import { createParams } from './utils';
-import { Nats } from './Nats';
-import { Dictionary, NatsMessage } from './types';
+import { PubSub } from './PubSub';
+import { Dictionary, PubSubMessage } from './types';
 
-export class Request implements Msg {
+/**
+ * Contain all request info for a controller
+ */
+export class Request {
   params: Dictionary<string>;
   headers: Dictionary<string>;
   data: any;
+  body: any;
   reply?: string;
-  sid: number;
-  size: number;
   subject: string;
 
-  constructor(message: NatsMessage, path: string) {
-    this.params = createParams(path, message.subject);
+  constructor(
+    message: PubSubMessage,
+    path: string,
+    params: Dictionary<string>,
+  ) {
     this.data = message.data;
-    this.reply = message.reply;
-    this.sid = message.sid;
-    this.size = message.size;
-    this.subject = message.subject;
-    this.headers = message.data.headers;
+    this.body = message.data;
+    this.reply = message.headers.reply;
+    this.subject = message.headers.subject || '';
+    this.headers = message.headers;
+    this.params = params;
   }
 }
 
+/**
+ * Context contain all data needed for a controller
+ */
 export class Context {
   req: Request;
   request: Request;
-  nats: Nats;
+  pubSub: PubSub;
   body: any = null;
   data: any;
+  params: Dictionary<string>;
 
-  constructor(message: NatsMessage, path: string, nats: Nats) {
-    this.req = this.request = new Request(message, path);
-    this.data = message.data.data;
-    this.nats = nats;
+  constructor(message: PubSubMessage, path: string, pubSub: PubSub) {
+    this.params = createParams(path, message.headers.subject || '');
+    this.req = this.request = new Request(message, path, this.params);
+    this.data = message.data;
+    this.pubSub = pubSub;
   }
 }

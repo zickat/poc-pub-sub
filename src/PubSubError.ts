@@ -1,4 +1,7 @@
-export class NatsError extends Error{
+/**
+ * Formatted error for pub sub message
+ */
+export class PubSubError extends Error {
   status: number;
 
   constructor(status: number, message: string) {

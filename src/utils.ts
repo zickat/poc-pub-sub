@@ -1,5 +1,9 @@
-import {Dictionary} from "./types";
+import { Dictionary } from './types';
 
+/**
+ * Split path by / and replace it by .
+ * @param path
+ */
 export const splitPath = (path: string) => {
   if (path[0] === '/') {
     path = path.substring(1);
@@ -7,6 +11,10 @@ export const splitPath = (path: string) => {
   return path.replace(new RegExp('/', 'g'), '.').split('.');
 };
 
+/**
+ * Format a path to pub sub format
+ * @param path
+ */
 export const formatPath = (path: string): string => {
   const a = splitPath(path);
   return a
@@ -17,6 +25,11 @@ export const formatPath = (path: string): string => {
     .join('.');
 };
 
+/**
+ * Take a path and a subject, and extract params from matching parts
+ * @param path
+ * @param subject
+ */
 export const createParams = (
   path: string,
   subject: string,

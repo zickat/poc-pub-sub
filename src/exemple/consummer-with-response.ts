@@ -1,13 +1,14 @@
-import { Nats } from '../Nats';
+import { PubSub } from '../PubSub';
 import { Context } from '../Context';
-import { NatsError } from '../NatsError';
-import { Router } from '../types';
+import { Routes } from '../types';
+import { PubSubError } from '../PubSubError';
+import { NatsProvider } from '../NatsProvider';
 
-const router: Router = {
+const router: Routes = {
   '/users/:id/:cid': async (ctx: Context) => {
     console.log({ msg: ctx.data, params: ctx.request.params });
     if (ctx.request.params.cid === '4') {
-      throw new NatsError(404, 'Not found');
+      throw new PubSubError(404, 'Not found');
     }
     return { message: `${ctx.data} - ${ctx.request.params.id}` };
   },
@@ -15,7 +16,6 @@ const router: Router = {
 
 const logger = async (ctx: Context, next: Function) => {
   console.log(`-------- begin ${ctx.request.subject} --------`);
-  console.log(ctx.request.headers);
   try {
     await next();
     console.log(`-------- end ${ctx.request.subject} --------`);
@@ -25,29 +25,7 @@ const logger = async (ctx: Context, next: Function) => {
   }
 };
 
-(async () => {
-  // let nc = await connect({ payload: Payload.JSON });
-  //
-  // let sub = await nc.subscribe('greeting', (err, msg) => {
-  //   if (err) {
-  //     console.log(err);
-  //   } else if (msg.reply) {
-  //     console.log(msg.data);
-  //     nc.publish(msg.reply, msg.data);
-  //   } else {
-  //     console.log('no reply');
-  //   }
-  // });
-
-  // await connect();
-  // await addRouteWithRespone('user', async msg => {
-  //   console.log({ msg });
-  //   return {
-  //     message: msg.data,
-  //   };
-  // });
-  const app = new Nats();
-  app.use(logger);
-  app.attachRoutes(router);
-  app.connect();
-})();
+const app = new PubSub(new NatsProvider());
+app.use(logger);
+app.attachRoutes(router);
+app.connect();
